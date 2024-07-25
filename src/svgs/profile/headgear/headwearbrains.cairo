@@ -1,4 +1,3 @@
-pub mod headwear_brains {
     use karst::svgs::profile::headwear::{HeadwearVariants, HeadwearColors};
     use karst::svgs::profile::lenscolors::{LensColors};
 
@@ -52,20 +51,3 @@ pub mod headwear_brains {
             BrainsColors::GOLD => HeadwearColors::GOLD,
         }
     }
-}
-
-// headwear.rs
-pub mod headwear {
-    pub enum HeadwearVariants {
-        BRAINS,
-        // Add other variants if necessary
-    }
-
-    pub enum HeadwearColors {
-        GREEN,
-        PINK,
-        BLUE,
-        PURPLE,
-        GOLD,
-    }
-}

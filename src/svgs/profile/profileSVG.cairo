@@ -1,4 +1,3 @@
-mod profileSVG{
     use karst::svgs::profile::helpers::{ComponentBytes, skin::SkinColors, get_variant, get_color,background::BackgroundColors};
     use karst::svgs::profile::body::{BodyVariants, BodyColors};
     use karst::svgs::profile::face::FaceVariants;
@@ -349,4 +348,3 @@ mod profileSVG{
             if chosen_elements.is_gold { gold_sparkles::get_gold_sparkles() } else { ByteArray::new() }
         )
     }
-}

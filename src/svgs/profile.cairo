@@ -1,10 +1,10 @@
 pub mod body;
 pub mod headwear;
+pub mod lenscolors;
 pub mod face;
 pub mod hands;
 pub mod head;
 pub mod legs;
-pub mod lenscolors;
 pub mod logo;
 pub mod profileSVG;
 pub mod shoes;

@@ -1,4 +1,3 @@
-pub mod head {
     use karst::svgs::profile::helpers::skin::SkinColors;
     pub enum HeadColors {
         GREEN,
@@ -45,4 +44,4 @@ pub mod head {
             HeadColors::GOLD => skin::get_skin_color(SkinColors::GOLD),
         }
     }
-}
+

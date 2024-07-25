@@ -1,4 +1,3 @@
-pub mod headwear_beanie {
     use karst::svgs::profile::headwear::{HeadwearVariants, HeadwearColors};
     use karst::svgs::profile::lenscolors::{LensColors};
 
@@ -51,4 +50,3 @@ pub mod headwear_beanie {
             BeanieColors::GOLD => HeadwearColors::GOLD,
         }
     }
-}

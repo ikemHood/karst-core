@@ -1,4 +1,3 @@
-pub mod headwear_bull {
     use karst::svgs::profile::headwear::{HeadwearVariants, HeadwearColors};
     use karst::svgs::profile::lenscolors::{LensColors};
 
@@ -53,4 +52,3 @@ pub mod headwear_bull {
             BullColors::GOLD => HeadwearColors::GOLD,
         }
     }
-}

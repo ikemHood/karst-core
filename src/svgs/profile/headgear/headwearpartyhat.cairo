@@ -1,5 +1,3 @@
-
-pub mod headwear_partyhat {
     use karst::svgs::profile::headwear::{HeadwearVariants, HeadwearColors};
     use karst::svgs::profile::lenscolors::{LensColors};
 
@@ -62,4 +60,3 @@ pub mod headwear_partyhat {
             PartyhatColors::GOLD => HeadwearColors::GOLD,
         }
     }
-}

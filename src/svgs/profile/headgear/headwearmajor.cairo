@@ -1,4 +1,3 @@
-pub mod headwear_major {
     use karst::svgs::profile::headwear::{HeadwearVariants, HeadwearColors};
     use karst::svgs::profile::lenscolors::{LensColors};
 
@@ -54,4 +53,4 @@ pub mod headwear_major {
             MajorColors::GOLD => HeadwearColors::GOLD,
         }
     }
-}
+

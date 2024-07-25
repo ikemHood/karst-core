@@ -1,4 +1,4 @@
-mod bodytanktop{
+
     use karst::svgs::profile::hands::HandsVariants;
     pub fn getBody(hands_variant: HandsVariants) -> ByteArray {
         match hands_variant {
@@ -13,4 +13,3 @@ mod bodytanktop{
             }
         }
     }
-}

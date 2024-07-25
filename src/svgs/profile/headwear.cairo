@@ -1,4 +1,3 @@
-mod headwear{
     use karst::svgs::profile::helpers;
     use karst::svgs::profile::headgear::{headwearbear,headwearbee,headwearbirdie,headwearbrains,headwearbull,headwearcrown,headwearearrings,headwearfloral,headwearglasses,headwearhat,headwearicecream,headwearlotus,headwearmajor,headwearmushroom,headwearnightcap,headwearpartyhat,headwearplants,headwearscout,headwearshaman,headwearsparkles};
     pub enum HeadwearVariants {
@@ -255,4 +254,3 @@ mod headwear{
             },
         }
     }
-}

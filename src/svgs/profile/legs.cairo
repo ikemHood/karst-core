@@ -1,4 +1,3 @@
-mod legs{
     use karst::svgs::profile::lenscolors::{LensColors};
     pub enum LegColors {
         GREEN,
@@ -45,4 +44,4 @@ mod legs{
             LegColors::GOLD => (LensColors::BASE_GOLD, LensColors::LIGHT_GOLD),
         }
     }
-}
+

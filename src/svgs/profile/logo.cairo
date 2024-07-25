@@ -1,4 +1,3 @@
-mod logo{
     mod karst::svgs::profile::lenscolors::{LensColors};
     mod karst::svgs::profile::body;
     pub enum LogoVariants {
@@ -136,4 +135,3 @@ mod logo{
             _ => panic!("Unhandled logo color"), // Avoid warnings.
         }
     }
-}

@@ -1,4 +1,3 @@
-pub mod headwear_birdie {
     use karst::svgs::profile::headwear::{HeadwearVariants, HeadwearColors};
     use karst::svgs::profile::lenscolors::{LensColors};
 
@@ -52,4 +51,3 @@ pub mod headwear_birdie {
             BirdieColors::GOLD => HeadwearColors::GOLD,
         }
     }
-}

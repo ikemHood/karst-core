@@ -1,4 +1,3 @@
-pub mod headwear_nightcap {
     use karst::svgs::profile::headwear::{HeadwearVariants, HeadwearColors};
     use karst::svgs::profile::lenscolors::{LensColors};
 
@@ -52,4 +51,3 @@ pub mod headwear_nightcap {
             NightcapColors::GOLD => HeadwearColors::GOLD,
         }
     }
-}

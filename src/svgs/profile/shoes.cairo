@@ -1,4 +1,4 @@
-mod shoes{
+
     use karst::svgs::profile::lenscolors::{LensColors};
     pub enum ShoeColors {
         GREEN,
@@ -57,4 +57,3 @@ mod shoes{
             ShoeColors::GOLD => LensColors::BASE_GOLD,
         }
     }
-}

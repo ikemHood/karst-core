@@ -1,4 +1,3 @@
-pub mod hands {
     use karst::svgs::profile::body::{BodyVariants, BodyColors};
     use karst::svgs::profile::helpers::skin::{self, SkinColors};
 
@@ -89,4 +88,3 @@ pub mod hands {
             _ => panic!("Unexpected body variant"), // Avoid warnings.
         }
     }
-}

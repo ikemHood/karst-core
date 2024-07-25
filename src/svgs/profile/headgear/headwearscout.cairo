@@ -1,7 +1,4 @@
-mod headwear;
-mod lens_colors;
 
-pub mod headwear_scout {
     use karst::svgs::profile::headwear::{HeadwearVariants, HeadwearColors};
     use karst::svgs::profile::lenscolors::{LensColors};
 
@@ -56,4 +53,4 @@ pub mod headwear_scout {
             ScoutColors::GOLD => HeadwearColors::GOLD,
         }
     }
-}
+

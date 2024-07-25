@@ -1,5 +1,3 @@
-
-pub mod headwear_icecream {
     use karst::svgs::profile::headwear::{HeadwearVariants, HeadwearColors};
     use karst::svgs::profile::lenscolors::{LensColors};
 
@@ -46,4 +44,3 @@ pub mod headwear_icecream {
             IcecreamColors::GOLD => HeadwearColors::GOLD,
         }
     }
-}
