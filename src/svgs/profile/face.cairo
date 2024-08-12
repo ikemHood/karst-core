@@ -33,9 +33,9 @@ pub mod face {
         face_color: FaceColors,
         skin_color: SkinColors,
     ) -> ByteArray {
-        let face_svg_start = format!(
-            r#"<svg xmlns="http://www.w3.org/2000/svg" width="210" height="335" fill="none">{}</svg>"#,
-            get_style_tag(face_color, skin_color)
+        let face_svg_start =  format!(
+    r#"<svg xmlns="http://www.w3.org/2000/svg" width="210" height="335" fill="none">{}</svg>"#,
+    get_style_tag(face_color, skin_color)
         );
         format!("{}{}", face_svg_start, get_face_variant(face_variant))
     }
@@ -259,7 +259,7 @@ pub mod face {
     <ellipse cx="9" cy="7.271" fill="#fff" fill-opacity=".45" rx="9" ry="7.271" transform="matrix(-1 0 0 1 142 149)"/>
     "# 
 ),
-            FaceVariants::SLEEPY =>format!(
+            FaceVariants::SLEEPY => format!(
     "<path class=\"faceFillColor\" fill-opacity=\".12\" d=\"{}\"/> \
      <path class=\"faceFillColor faceStrokeColor\" stroke-width=\"{}\" d=\"{}\"/> \
      <path class=\"faceFillColor faceStrokeColor\" stroke-width=\"{}\" d=\"{}\"/> \
