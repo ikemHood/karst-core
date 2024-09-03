@@ -166,20 +166,21 @@
      ```
 
 3. Followers
-
    - Query: followers
    - Description: Retrieve followers for a given profile
    - Parameters:
-     - profileId: ID! (required)
+     - profileAddress: String (optional, either this or handle must be provided)
+     - handle: String (optional, either this or profileAddress must be provided)
      - first: Int (optional, for pagination)
      - after: String (optional, for pagination)
    - Returns: List of Profile objects
    - Example Request:
      ```graphql
      query {
-       followers(profileId: "5", first: 2) {
+       followers(handle: "alice", first: 2) {
          id
          profileAddress
+         handle
          followedAt
        }
      }
@@ -192,11 +193,13 @@
            {
              "id": "10",
              "profileAddress": "0x2468...1357",
+             "handle": "bob",
              "followedAt": "2023-04-16T09:30:00Z"
            },
            {
              "id": "15",
              "profileAddress": "0x1357...2468",
+             "handle": "charlie",
              "followedAt": "2023-04-16T10:15:00Z"
            }
          ]
@@ -205,20 +208,21 @@
      ```
 
 4. Following
-
    - Query: following
    - Description: Retrieve profiles followed by a given profile
    - Parameters:
-     - profileId: ID! (required)
+     - profileAddress: String (optional, either this or handle must be provided)
+     - handle: String (optional, either this or profileAddress must be provided)
      - first: Int (optional, for pagination)
      - after: String (optional, for pagination)
    - Returns: List of Profile objects
    - Example Request:
      ```graphql
      query {
-       following(profileId: "5", first: 2) {
+       following(profileAddress: "0xabcd...ef01", first: 2) {
          id
          profileAddress
+         handle
          followedAt
        }
      }
@@ -231,11 +235,13 @@
            {
              "id": "3",
              "profileAddress": "0x3333...4444",
+             "handle": "david",
              "followedAt": "2023-04-17T08:45:00Z"
            },
            {
              "id": "7",
              "profileAddress": "0x7777...8888",
+             "handle": "emma",
              "followedAt": "2023-04-17T09:30:00Z"
            }
          ]
@@ -317,22 +323,23 @@
      ```
 
 7. PublicationsByProfile
-
    - Query: publicationsByProfile
    - Description: Retrieve publications created by a specific profile
    - Parameters:
-     - profileId: ID! (required)
+     - profileAddress: String (optional, either this or handle must be provided)
+     - handle: String (optional, either this or profileAddress must be provided)
      - first: Int (optional, for pagination)
      - after: String (optional, for pagination)
-     - type: PublicationType (optional, to filter by type)
+     - type: PublicationType (optional, to filter by type: POST, COMMENT, MIRROR, QUOTE)
    - Returns: List of Publication objects
    - Example Request:
      ```graphql
      query {
-       publicationsByProfile(profileId: "5", first: 2, type: POST) {
+       publicationsByProfile(handle: "alice", first: 2, type: POST) {
          id
          content
          timestamp
+         publicationType
        }
      }
      ```
@@ -344,12 +351,14 @@
            {
              "id": "10",
              "content": "My first post on Karst!",
-             "timestamp": "2023-04-19T14:00:00Z"
+             "timestamp": "2023-04-19T14:00:00Z",
+             "publicationType": "POST"
            },
            {
              "id": "15",
              "content": "Loving the community here!",
-             "timestamp": "2023-04-20T10:30:00Z"
+             "timestamp": "2023-04-20T10:30:00Z",
+             "publicationType": "POST"
            }
          ]
        }
@@ -357,20 +366,21 @@
      ```
 
 8. BlockedFollowers
-
    - Query: blockedFollowers
    - Description: Retrieve blocked followers for a given profile
    - Parameters:
-     - profileId: ID! (required)
+     - profileAddress: String (optional, either this or handle must be provided)
+     - handle: String (optional, either this or profileAddress must be provided)
      - first: Int (optional, for pagination)
      - after: String (optional, for pagination)
    - Returns: List of Profile objects
    - Example Request:
      ```graphql
      query {
-       blockedFollowers(profileId: "5", first: 2) {
+       blockedFollowers(profileAddress: "0xabcd...ef01", first: 2) {
          id
          profileAddress
+         handle
          blockedAt
        }
      }
@@ -383,11 +393,13 @@
            {
              "id": "20",
              "profileAddress": "0x2222...3333",
+             "handle": "malicious_user",
              "blockedAt": "2023-04-21T16:45:00Z"
            },
            {
              "id": "25",
              "profileAddress": "0x4444...5555",
+             "handle": "spam_account",
              "blockedAt": "2023-04-22T09:15:00Z"
            }
          ]
@@ -435,7 +447,6 @@
      ```
 
 10. OwnershipHistory
-
     - Query: ownershipHistory
     - Description: Retrieve ownership transfer history
     - Parameters:
@@ -473,18 +484,18 @@
       ```
 
 11. Mirrors
-
     - Query: mirrors
     - Description: Retrieve all mirrors
     - Parameters:
       - first: Int (optional, for pagination)
       - after: String (optional, for pagination)
       - profileId: ID (optional, to filter by profile)
+      - mirroredPublicationId: ID (optional, to filter by mirrored publication)
     - Returns: List of Mirror objects
     - Example Request:
       ```graphql
       query {
-        mirrors(first: 2) {
+        mirrors(first: 2, mirroredPublicationId: "10") {
           id
           profileId
           mirroredPublicationId
@@ -506,7 +517,7 @@
             {
               "id": "2",
               "profileId": "8",
-              "mirroredPublicationId": "15",
+              "mirroredPublicationId": "10",
               "timestamp": "2023-04-25T10:15:00Z"
             }
           ]
@@ -515,19 +526,18 @@
       ```
 
 12. Comments
-
     - Query: comments
     - Description: Retrieve all comments
     - Parameters:
       - first: Int (optional, for pagination)
       - after: String (optional, for pagination)
       - profileId: ID (optional, to filter by profile)
-      - publicationId: ID (optional, to filter by parent publication)
+      - parentId: ID (optional, to filter by parent publication)
     - Returns: List of Comment objects
     - Example Request:
       ```graphql
       query {
-        comments(first: 2, publicationId: "10") {
+        comments(first: 2, parentId: "10") {
           id
           profileId
           content
@@ -567,11 +577,12 @@
       - first: Int (optional, for pagination)
       - after: String (optional, for pagination)
       - profileId: ID (optional, to filter by profile)
+      - quotedPublicationId: ID (optional, to filter by quoted publication)
     - Returns: List of Quote objects
     - Example Request:
       ```graphql
       query {
-        quotes(first: 2) {
+        quotes(first: 2, quotedPublicationId: "20") {
           id
           profileId
           content
@@ -596,7 +607,7 @@
               "id": "2",
               "profileId": "8",
               "content": "Interesting perspective on this.",
-              "quotedPublicationId": "25",
+              "quotedPublicationId": "20",
               "timestamp": "2023-04-27T14:30:00Z"
             }
           ]
