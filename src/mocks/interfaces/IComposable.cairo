@@ -50,10 +50,7 @@ pub trait IComposable<TState> {
     fn collect(
         ref self: TState,
         profile_address: ContractAddress,
-        pub_id: u256,
-        channel_id: u256,
-        community_id: u256,
-        collect_nft_impl_class_hash: felt252,
+        pub_id: u256
     ) -> u256;
 
     // *************************************************************************

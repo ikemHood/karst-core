@@ -171,7 +171,7 @@ fn test_cannot_burn_if_not_owner_of() {
     start_cheat_caller_address(contract_address, USER_TWO.try_into().unwrap());
     dispatcher.burn_handle(handle_id);
 }
-//todo this test fails
+
 #[test]
 fn test_get_handle() {
     let handles_contract_address = __setup__();

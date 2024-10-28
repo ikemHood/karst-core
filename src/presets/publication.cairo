@@ -77,9 +77,11 @@ pub mod ColonizPublication {
         follow_nft_classhash: felt252,
         channel_nft_classhash: felt252,
         community_nft_classhash: felt252,
+        collect_nft_classhash: felt252,
         owner: ContractAddress
     ) {
         self.profile._initializer(coloniznft_contract_address, hub_address, follow_nft_classhash);
+        self.publication._initializer(collect_nft_classhash);
         self.channel._initializer(channel_nft_classhash);
         self.community._initializer(community_nft_classhash);
         self.jolt._initializer(owner);

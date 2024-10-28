@@ -52,14 +52,18 @@ fn __setup__() -> (
     let channel_nft_classhash = declare("ChannelNFT").unwrap().contract_class();
     // declare community_nft
     let community_nft_classhash = declare("CommunityNFT").unwrap().contract_class();
+    // declare collectnft
+    let collect_nft_classhash = declare("CollectNFT").unwrap().contract_class();
     // deploy publication preset
     let publication_contract = declare("ColonizPublication").unwrap().contract_class();
+
     let mut publication_constructor_calldata = array![
         nft_contract_address.into(),
         HUB_ADDRESS,
         (*follow_nft_classhash.class_hash).into(),
         (*channel_nft_classhash.class_hash).into(),
         (*community_nft_classhash.class_hash).into(),
+        (*collect_nft_classhash.class_hash).into(),
         ADMIN
     ];
 
@@ -75,8 +79,6 @@ fn __setup__() -> (
     // declare account
     let account_class_hash = declare("AccountV3").unwrap().contract_class();
 
-    //declare collectnft
-    let collect_nft_classhash = declare("CollectNFT").unwrap().contract_class();
     return (
         nft_contract_address,
         registry_contract_address,
@@ -232,6 +234,7 @@ fn test_community_censorship_post_status_tobe_true() {
 
     stop_cheat_caller_address(publication_contract_address);
 }
+
 #[test]
 fn test_community_censorship_post_status_tobe_false() {
     let (
@@ -279,7 +282,6 @@ fn test_community_censorship_post_status_tobe_false() {
 
     stop_cheat_caller_address(publication_contract_address);
 }
-
 
 #[test]
 fn test_channel_censorship_post_status_tobe_true() {
@@ -632,7 +634,7 @@ fn test_upvote() {
     let community_dispatcher = ICommunityDispatcher {
         contract_address: publication_contract_address
     };
-    let content_URI2: ByteArray = "ipfs://helloworld";
+    let content_URI: ByteArray = "ipfs://helloworld";
 
     start_cheat_caller_address(publication_contract_address, USER_TWO.try_into().unwrap());
     let user_two_profile_address = publication_dispatcher
@@ -642,7 +644,7 @@ fn test_upvote() {
     let pub_assigned_id = publication_dispatcher
         .post(
             PostParams {
-                content_URI: content_URI2,
+                content_URI: content_URI,
                 profile_address: user_two_profile_address,
                 channel_id: channel_id,
                 community_id: community_id
@@ -1549,7 +1551,7 @@ fn test_collect() {
         publication_contract_address,
         registry_class_hash,
         account_class_hash,
-        collect_nft_classhash,
+        _,
         _,
     ) =
         __setup__();
@@ -1602,10 +1604,7 @@ fn test_collect() {
     let token_id = publication_dispatcher
         .collect(
             profile_address: user_one_profile_address,
-            pub_id: pub_assigned_id,
-            channel_id: channel_id,
-            community_id: community_id,
-            collect_nft_impl_class_hash: collect_nft_classhash,
+            pub_id: pub_assigned_id
         );
     let collect_nft1 = publication_dispatcher
         .get_publication(user_one_profile_address, pub_assigned_id)
@@ -1621,10 +1620,7 @@ fn test_collect() {
     let token_id2 = publication_dispatcher
         .collect(
             profile_address: user_one_profile_address,
-            pub_id: pub_assigned_id,
-            channel_id: channel_id,
-            community_id: community_id,
-            collect_nft_impl_class_hash: collect_nft_classhash,
+            pub_id: pub_assigned_id
         );
     let collect_nft2 = publication_dispatcher
         .get_publication(user_one_profile_address, pub_assigned_id)

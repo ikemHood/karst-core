@@ -162,23 +162,6 @@ pub struct RepostParams {
     pub community_id: u256,
 }
 
-// /**
-// * @notice A struct containing the parameters required for the `quote()` function.
-// *
-// * @param profile_address The address of the profile to publish to.
-// * @param content_URI The URI to set for this new publication.
-// * @param pointed_profile_address The profile address of the publication author that is quoted.
-// * @param pointed_pub_id The publication ID that is quoted.
-// */
-#[derive(Drop, Serde, starknet::Store, Clone)]
-pub struct QuoteParams {
-    pub profile_address: ContractAddress,
-    pub content_URI: ByteArray,
-    pub pointed_profile_address: ContractAddress,
-    pub pointed_pub_id: u256,
-    pub reference_pub_type: PublicationType
-}
-
 // *************************************************************************
 //                            COMMUNITY
 // *************************************************************************

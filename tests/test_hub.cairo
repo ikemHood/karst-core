@@ -55,9 +55,12 @@ fn __setup__() -> (ContractAddress, ContractAddress, ContractAddress, ContractAd
     let follow_nft_classhash = declare("Follow").unwrap().contract_class();
 
     let channel_nft_classhash = declare("ChannelNFT").unwrap().contract_class();
-    // declare community_nft
 
+    // declare community_nft
     let community_nft_classhash = declare("CommunityNFT").unwrap().contract_class();
+
+    // declare collectnft
+    let collect_nft_classhash = declare("CollectNFT").unwrap().contract_class();
 
     // deploy hub contract
     let hub_class_hash = declare("ColonizHub").unwrap().contract_class();
@@ -68,6 +71,7 @@ fn __setup__() -> (ContractAddress, ContractAddress, ContractAddress, ContractAd
         (*follow_nft_classhash.class_hash).into(),
         (*channel_nft_classhash.class_hash).into(),
         (*community_nft_classhash.class_hash).into(),
+        (*collect_nft_classhash.class_hash).into(),
         OWNER
     ];
     let (hub_contract_address, _) = hub_class_hash.deploy(@calldata).unwrap_syscall();
@@ -266,7 +270,6 @@ fn test_get_handle_id() {
     assert(handle_id == minted_handle_id, 'invalid handle id');
 }
 
-// todo
 #[test]
 fn test_get_handle() {
     let (hub_contract_address, _, _, _, minted_handle_id) = __setup__();
