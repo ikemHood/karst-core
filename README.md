@@ -5,7 +5,7 @@
 
 <!-- primary badges -->
 <p align="center">
-  <a href="https://github.com/argentlabs/starknetkit/blob/main/LICENSE/">
+  <a href="https://github.com/horuslabsio/coloniz-core/blob/main/LICENSE/">
     <img src="https://img.shields.io/badge/license-MIT-black">
   </a>
 </p>
@@ -56,7 +56,7 @@ If you believe you have found a security vulnerability in our code, please repor
 
 ## License
 
-coloniz is an open-source software licensed under the [MIT](https://github.com/horuslabsio/coloniz-core/blob/master/LICENSE.md).
+coloniz is an open-source software licensed under the [MIT](https://github.com/horuslabsio/coloniz-core/blob/main/LICENSE).
 
 
 ## Architecture
