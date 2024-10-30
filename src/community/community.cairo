@@ -344,11 +344,20 @@ pub mod CommunityComponent {
                 );
             }
 
+            // create subscription item 
+            let mut sub_id = 0;
+            let (erc20_contract_address, amount) = paid_gating_details;
+            if(gate_keep_type == GateKeepType::PaidGating) {
+                let mut jolt_comp = get_dep_component_mut!(ref self, Jolt);
+                sub_id = jolt_comp.create_subscription(self.fee_address.read(community_id), amount, erc20_contract_address);
+            }
+
+            // update gatekeep details
             let mut community_gate_keep_details = CommunityGateKeepDetails {
                 community_id: community_id,
                 gate_keep_type: gate_keep_type.clone(),
                 gatekeep_nft_address: nft_contract_address,
-                paid_gating_details: paid_gating_details
+                paid_gating_details: (sub_id, erc20_contract_address, amount)
             };
 
             // permissioned gatekeeping
@@ -544,7 +553,7 @@ pub mod CommunityComponent {
                 community_id: community_id,
                 gate_keep_type: GateKeepType::None,
                 gatekeep_nft_address: contract_address_const::<0>(),
-                paid_gating_details: (contract_address_const::<0>(), 0)
+                paid_gating_details: (0, contract_address_const::<0>(), 0)
             };
 
             self.communities.write(community_id, community_details);
@@ -752,7 +761,7 @@ pub mod CommunityComponent {
                 // enforce paid gatekeeping
                 GateKeepType::PaidGating => {
                     let fee_address = self.fee_address.read(community_id);
-                    let (erc20_contract_address, entry_fee) = gatekeep_details.paid_gating_details;
+                    let (sub_id, erc20_contract_address, entry_fee) = gatekeep_details.paid_gating_details;
 
                     let jolt_params = JoltParams {
                         jolt_type: JoltType::Transfer,
@@ -760,7 +769,7 @@ pub mod CommunityComponent {
                         memo: "Joined Community",
                         amount: entry_fee,
                         expiration_stamp: 0,
-                        subscription_details: (0, false, 0),
+                        subscription_details: (sub_id, false, 0),
                         erc20_contract_address: erc20_contract_address
                     };
 

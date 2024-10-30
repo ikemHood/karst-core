@@ -23,7 +23,7 @@ pub mod Errors {
     pub const ALREADY_MEMBER: felt252 = 'coloniz: already a Member';
     pub const COMMUNITY_DOES_NOT_EXIST: felt252 = 'coloniz: Comm does not exist';
     pub const NOT_COMMUNITY_OWNER: felt252 = 'coloniz: Not Community owner';
-    pub const ONLY_PREMIUM_COMMUNITIES: felt252 = 'coloniz: only premium communiti';
+    pub const ONLY_PREMIUM_COMMUNITIES: felt252 = 'coloniz: not premium community';
     pub const NOT_COMMUNITY_MEMBER: felt252 = 'coloniz: Not Community Member';
     pub const NOT_COMMUNITY_MOD: felt252 = 'coloniz: Not a community mod';
     pub const BANNED_MEMBER: felt252 = 'coloniz: Profile is banned!';

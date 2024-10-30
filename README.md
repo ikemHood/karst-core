@@ -10,9 +10,13 @@
   </a>
 </p>
 
-coloniz is a permissionless and composable social graph built on Starknet, empowering creators to own every part of their social experience.
+Coloniz empowers you to build smart, dynamic communities effortlessly. 
 
-With coloniz, creators no longer need to worry about losing their content, audience, and livelihood based on the whims of an individual platform's algorithms and policies.
+Create your own colony, define custom rules, and leverage a powerful AI assistant that learns from community discussions to provide personalized support to your colonists.
+
+## Architecture
+
+<img width="100%" alt="Screenshot 2024-05-24 at 00 11 16" src="https://github.com/horuslabsio/coloniz-core/blob/main/img/architecture.png?raw=true">
 
 ## Development Setup
 You will need to have Scarb and Starknet Foundry installed on your system. Refer to the documentations below:

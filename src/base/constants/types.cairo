@@ -218,7 +218,7 @@ pub struct CommunityGateKeepDetails {
     pub community_id: u256,
     pub gate_keep_type: GateKeepType,
     pub gatekeep_nft_address: ContractAddress,
-    pub paid_gating_details: (ContractAddress, u256)
+    pub paid_gating_details: (u256, ContractAddress, u256)
 }
 
 ///**
