@@ -10,8 +10,10 @@ pub mod PublicationComponent {
     use starknet::{
         ContractAddress, get_caller_address, get_contract_address, get_block_timestamp,
         syscalls::{deploy_syscall}, class_hash::ClassHash, SyscallResultTrait,
-        storage::{StoragePointerReadAccess, StoragePointerWriteAccess, Map, StorageMapReadAccess,
-            StorageMapWriteAccess}
+        storage::{
+            StoragePointerReadAccess, StoragePointerWriteAccess, Map, StorageMapReadAccess,
+            StorageMapWriteAccess
+        }
     };
     use coloniz::interfaces::IPublication::IColonizPublications;
     use coloniz::interfaces::IJolt::IJolt;
@@ -219,14 +221,14 @@ pub mod PublicationComponent {
 
             if comment_params.community_id != 0 {
                 self
-                ._validate_community_membership_and_ban_status(
-                    profile_owner, comment_params.community_id
-                );
-            }
-            else {
-                self._validate_channel_membership_and_ban_status(
-                    profile_owner, comment_params.channel_id
-                );
+                    ._validate_community_membership_and_ban_status(
+                        profile_owner, comment_params.community_id
+                    );
+            } else {
+                self
+                    ._validate_channel_membership_and_ban_status(
+                        profile_owner, comment_params.channel_id
+                    );
             }
             assert(profile_owner == get_caller_address(), NOT_PROFILE_OWNER);
 
@@ -264,14 +266,14 @@ pub mod PublicationComponent {
                 .profile_owner;
             if repost_params.community_id != 0 {
                 self
-                ._validate_community_membership_and_ban_status(
-                    profile_owner, repost_params.community_id
-                );
-            }
-            else {
-                self._validate_channel_membership_and_ban_status(
-                    profile_owner, repost_params.channel_id
-                );
+                    ._validate_community_membership_and_ban_status(
+                        profile_owner, repost_params.community_id
+                    );
+            } else {
+                self
+                    ._validate_channel_membership_and_ban_status(
+                        profile_owner, repost_params.channel_id
+                    );
             }
             assert(profile_owner == get_caller_address(), NOT_PROFILE_OWNER);
 
@@ -317,14 +319,11 @@ pub mod PublicationComponent {
 
             if publication.community_id != 0 {
                 self
-                ._validate_community_membership_and_ban_status(
-                    caller, publication.community_id
-                );
-            }
-            else {
-                self._validate_channel_membership_and_ban_status(
-                    caller, publication.channel_id
-                );
+                    ._validate_community_membership_and_ban_status(
+                        caller, publication.community_id
+                    );
+            } else {
+                self._validate_channel_membership_and_ban_status(caller, publication.channel_id);
             }
 
             let upvote_current_count = publication.upvote + 1;
@@ -358,14 +357,11 @@ pub mod PublicationComponent {
 
             if publication.community_id != 0 {
                 self
-                ._validate_community_membership_and_ban_status(
-                    caller, publication.community_id
-                );
-            }
-            else {
-                self._validate_channel_membership_and_ban_status(
-                    caller, publication.channel_id
-                );
+                    ._validate_community_membership_and_ban_status(
+                        caller, publication.community_id
+                    );
+            } else {
+                self._validate_channel_membership_and_ban_status(caller, publication.channel_id);
             }
 
             let downvote_current_count = publication.downvote + 1;
@@ -402,14 +398,11 @@ pub mod PublicationComponent {
 
             if publication.community_id != 0 {
                 self
-                ._validate_community_membership_and_ban_status(
-                    caller, publication.community_id
-                );
-            }
-            else {
-                self._validate_channel_membership_and_ban_status(
-                    caller, publication.channel_id
-                );
+                    ._validate_community_membership_and_ban_status(
+                        caller, publication.community_id
+                    );
+            } else {
+                self._validate_channel_membership_and_ban_status(caller, publication.channel_id);
             }
 
             let jolt_param = JoltParams {
@@ -442,18 +435,14 @@ pub mod PublicationComponent {
 
             if publication.community_id != 0 {
                 self
-                ._validate_community_membership_and_ban_status(
-                    caller, publication.community_id
-                );
-            }
-            else {
-                self._validate_channel_membership_and_ban_status(
-                    caller, publication.channel_id
-                );
+                    ._validate_community_membership_and_ban_status(
+                        caller, publication.community_id
+                    );
+            } else {
+                self._validate_channel_membership_and_ban_status(caller, publication.channel_id);
             }
 
-            let collect_nft_address = self
-                ._get_or_deploy_collect_nft(profile_address, pub_id);
+            let collect_nft_address = self._get_or_deploy_collect_nft(profile_address, pub_id);
             let token_id = self._mint_collect_nft(collect_nft_address, caller);
 
             self
@@ -732,8 +721,10 @@ pub mod PublicationComponent {
             let mut constructor_calldata: Array<felt252> = array![
                 coloniz_hub.into(), profile_address.into(), pub_id.low.into(), pub_id.high.into()
             ];
-    
-            let result = deploy_syscall(collect_nft_impl_class_hash, salt, constructor_calldata.span(), true);
+
+            let result = deploy_syscall(
+                collect_nft_impl_class_hash, salt, constructor_calldata.span(), true
+            );
             let (account_address, _) = result.unwrap_syscall();
 
             self
@@ -789,7 +780,9 @@ pub mod PublicationComponent {
         /// @param collect_nft nft of the collected token
         /// @param caller profile to be minted to
         fn _mint_collect_nft(
-            ref self: ComponentState<TContractState>, collect_nft: ContractAddress, caller: ContractAddress
+            ref self: ComponentState<TContractState>,
+            collect_nft: ContractAddress,
+            caller: ContractAddress
         ) -> u256 {
             let token_id = ICollectNFTDispatcher { contract_address: collect_nft }.mint_nft(caller);
             token_id
@@ -822,7 +815,7 @@ pub mod PublicationComponent {
         ) -> bool {
             let channel_comp = get_dep_component!(self, Channel);
             let channel_censorship_status = channel_comp.get_channel_censorship_status(channel_id);
-            
+
             // check profile is a channel member and has not been banned
             self._validate_channel_membership_and_ban_status(profile_owner, channel_id);
 

@@ -120,9 +120,7 @@ pub mod Handles {
         /// @notice mints a handle to a profile address
         /// @param address profile address to mint handle to
         /// @param local_name username to be minted
-        fn mint_handle(
-            ref self: ContractState, local_name: felt252,
-        ) -> u256 {
+        fn mint_handle(ref self: ContractState, local_name: felt252,) -> u256 {
             let address = get_caller_address();
             self._validate_local_name(local_name);
             let token_id = self._mint_handle(address, local_name);

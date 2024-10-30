@@ -43,6 +43,9 @@ pub mod JoltComponent {
         Jolted: Jolted,
         JoltRequested: JoltRequested,
         JoltRequestFullfilled: JoltRequestFullfilled,
+        SubscriptionCreated: SubscriptionCreated,
+        SubscriptionUpdated: SubscriptionUpdated,
+        AutoRenewalCancelled: AutoRenewalCancelled
     }
 
     #[derive(Drop, starknet::Event)]
@@ -74,6 +77,33 @@ pub mod JoltComponent {
         pub block_timestamp: u64,
     }
 
+    #[derive(Drop, starknet::Event)]
+    pub struct SubscriptionCreated {
+        pub sub_id: u256,
+        pub creator: ContractAddress,
+        pub fee_address: ContractAddress,
+        pub amount: u256,
+        pub erc20_contract_address: ContractAddress,
+        pub block_timestamp: u64,
+    }
+
+    #[derive(Drop, starknet::Event)]
+    pub struct SubscriptionUpdated {
+        pub sub_id: u256,
+        pub creator: ContractAddress,
+        pub fee_address: ContractAddress,
+        pub amount: u256,
+        pub erc20_contract_address: ContractAddress,
+        pub block_timestamp: u64,
+    }
+
+    #[derive(Drop, starknet::Event)]
+    pub struct AutoRenewalCancelled {
+        pub sub_id: u256,
+        pub subscriber: ContractAddress,
+        pub block_timestamp: u64
+    }
+
     const MAX_TIP: u256 = 1000;
 
     #[embeddable_as(Jolt)]
@@ -89,7 +119,6 @@ pub mod JoltComponent {
 
         /// @notice multi-faceted transfer logic
         /// @param jolt_params required jolting parameters
-        /// TODO: updating subscriptions, tracking auto renewals
         fn jolt(ref self: ComponentState<TContractState>, jolt_params: JoltParams) -> u256 {
             let sender = get_caller_address();
             let tx_info = get_tx_info().unbox();
@@ -246,6 +275,61 @@ pub mod JoltComponent {
             // update storage
             self.subscriptions.write(sub_id, subscription_data);
 
+            // emit event
+            self
+                .emit(
+                    SubscriptionCreated {
+                        sub_id,
+                        creator: caller,
+                        fee_address: fee_address,
+                        amount: amount,
+                        erc20_contract_address: erc20_contract_address,
+                        block_timestamp: get_block_timestamp(),
+                    }
+                );
+
+            sub_id
+        }
+
+        /// @notice update an existing subscription item
+        /// @param sub_id id of subscription to be updated
+        /// @param fee_address address to send subscription fees to
+        /// @param amount amount to be paid for subscription
+        /// @param erc20_contract_addrress token to receive subscription in
+        /// @dev users subscribed to a subscription item should be alerted on update
+        fn update_subscription(
+            ref self: ComponentState<TContractState>,
+            sub_id: u256,
+            fee_address: ContractAddress,
+            amount: u256,
+            erc20_contract_address: ContractAddress
+        ) -> u256 {
+            let subscription_creator = self.subscriptions.read(sub_id).creator;
+            assert(subscription_creator == get_caller_address(), Errors::UNAUTHORIZED);
+
+            let new_subscription_data = SubscriptionData {
+                creator: subscription_creator,
+                fee_address: fee_address,
+                amount: amount,
+                erc20_contract_address: erc20_contract_address
+            };
+
+            // update storage
+            self.subscriptions.write(sub_id, new_subscription_data);
+
+            // emit event
+            self
+                .emit(
+                    SubscriptionUpdated {
+                        sub_id,
+                        creator: subscription_creator,
+                        fee_address: fee_address,
+                        amount: amount,
+                        erc20_contract_address: erc20_contract_address,
+                        block_timestamp: get_block_timestamp(),
+                    }
+                );
+
             sub_id
         }
 
@@ -275,6 +359,19 @@ pub mod JoltComponent {
         ) {
             get_dep_component!(@self, Ownable).assert_only_owner();
             self._set_whitelisted_renewers_status(renewers, false);
+        }
+
+        fn cancel_auto_renewal(ref self: ComponentState<TContractState>, sub_id: u256) {
+            let caller = get_caller_address();
+            self.renewal_iterations.write((caller, sub_id), 0);
+
+            // emit event
+            self
+                .emit(
+                    AutoRenewalCancelled {
+                        sub_id, subscriber: caller, block_timestamp: get_block_timestamp()
+                    }
+                );
         }
 
         // *************************************************************************

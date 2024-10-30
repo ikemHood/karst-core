@@ -344,12 +344,15 @@ pub mod CommunityComponent {
                 );
             }
 
-            // create subscription item 
+            // create subscription item
             let mut sub_id = 0;
             let (erc20_contract_address, amount) = paid_gating_details;
-            if(gate_keep_type == GateKeepType::PaidGating) {
+            if (gate_keep_type == GateKeepType::PaidGating) {
                 let mut jolt_comp = get_dep_component_mut!(ref self, Jolt);
-                sub_id = jolt_comp.create_subscription(self.fee_address.read(community_id), amount, erc20_contract_address);
+                sub_id = jolt_comp
+                    .create_subscription(
+                        self.fee_address.read(community_id), amount, erc20_contract_address
+                    );
             }
 
             // update gatekeep details
@@ -761,7 +764,8 @@ pub mod CommunityComponent {
                 // enforce paid gatekeeping
                 GateKeepType::PaidGating => {
                     let fee_address = self.fee_address.read(community_id);
-                    let (sub_id, erc20_contract_address, entry_fee) = gatekeep_details.paid_gating_details;
+                    let (sub_id, erc20_contract_address, entry_fee) = gatekeep_details
+                        .paid_gating_details;
 
                     let jolt_params = JoltParams {
                         jolt_type: JoltType::Transfer,

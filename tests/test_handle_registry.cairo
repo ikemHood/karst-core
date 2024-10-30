@@ -4,8 +4,9 @@ use core::result::ResultTrait;
 use core::traits::{TryInto, Into};
 use starknet::{ContractAddress, get_block_timestamp};
 use snforge_std::{
-    declare, start_cheat_caller_address, stop_cheat_caller_address, start_cheat_block_timestamp, stop_cheat_block_timestamp, spy_events,
-    EventSpyAssertionsTrait, ContractClassTrait, DeclareResultTrait
+    declare, start_cheat_caller_address, stop_cheat_caller_address, start_cheat_block_timestamp,
+    stop_cheat_block_timestamp, spy_events, EventSpyAssertionsTrait, ContractClassTrait,
+    DeclareResultTrait
 };
 
 

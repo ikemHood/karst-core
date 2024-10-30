@@ -3,14 +3,11 @@ use starknet::ContractAddress;
 #[starknet::interface]
 trait IColonizHub<TState> {
     fn follow(
-        ref self: TState,
-        address_of_profiles_to_follow: Array<ContractAddress>
+        ref self: TState, address_of_profiles_to_follow: Array<ContractAddress>
     ) -> Array<u256>;
     fn unfollow(ref self: TState, address_of_profiles_to_unfollow: Array<ContractAddress>);
     fn set_block_status(
-        ref self: TState,
-        address_of_profiles_to_block: Array<ContractAddress>,
-        block_status: bool
+        ref self: TState, address_of_profiles_to_block: Array<ContractAddress>, block_status: bool
     );
     fn is_following(
         self: @TState, followed_profile_address: ContractAddress, follower_address: ContractAddress
@@ -148,8 +145,7 @@ pub mod ColonizHub {
         /// @notice follows a set of given addresses
         /// @param address_of_profiles_to_follow addresses of profiles to follow
         fn follow(
-            ref self: ContractState,
-            address_of_profiles_to_follow: Array<ContractAddress>
+            ref self: ContractState, address_of_profiles_to_follow: Array<ContractAddress>
         ) -> Array<u256> {
             let follower_profile_address = get_caller_address();
             let mut addresses_to_follow = address_of_profiles_to_follow.span();

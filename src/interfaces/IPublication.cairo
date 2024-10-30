@@ -23,11 +23,7 @@ pub trait IColonizPublications<TState> {
         amount: u256,
         erc20_contract_address: ContractAddress,
     );
-    fn collect(
-        ref self: TState,
-        profile_address: ContractAddress,
-        pub_id: u256
-    ) -> u256;
+    fn collect(ref self: TState, profile_address: ContractAddress, pub_id: u256) -> u256;
     // *************************************************************************
     //                              GETTERS
     // *************************************************************************

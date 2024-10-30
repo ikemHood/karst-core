@@ -249,9 +249,7 @@ fn test_set_block_status() {
 
     // block action
     start_cheat_caller_address(hub_contract_address, user_two_profile_address);
-    let profiles_to_block: Array<ContractAddress> = array![
-        user_one_profile_address
-    ];
+    let profiles_to_block: Array<ContractAddress> = array![user_one_profile_address];
     dispatcher.set_block_status(profiles_to_block, true);
 
     // check block status
@@ -261,9 +259,7 @@ fn test_set_block_status() {
 
     // unblock action
     start_cheat_caller_address(hub_contract_address, user_two_profile_address);
-    let profiles_to_unblock: Array<ContractAddress> = array![
-        user_one_profile_address
-    ];
+    let profiles_to_unblock: Array<ContractAddress> = array![user_one_profile_address];
     dispatcher.set_block_status(profiles_to_unblock, false);
 
     // check block status

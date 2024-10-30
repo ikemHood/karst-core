@@ -882,6 +882,37 @@ fn test_create_subscription() {
 }
 
 #[test]
+fn test_update_subscription() {
+    let (jolt_contract_address, erc20_contract_address) = __setup__();
+    let dispatcher = IJoltDispatcher { contract_address: jolt_contract_address };
+
+    // create subscription
+    start_cheat_caller_address(jolt_contract_address, ADDRESS1.try_into().unwrap());
+    let sub_id = dispatcher
+        .create_subscription(
+            ADMIN.try_into().unwrap(), 2000000000000000000, erc20_contract_address
+        );
+    stop_cheat_caller_address(jolt_contract_address);
+
+    // update subscription
+    start_cheat_caller_address(jolt_contract_address, ADDRESS1.try_into().unwrap());
+    dispatcher
+        .update_subscription(
+            sub_id, ADDRESS1.try_into().unwrap(), 1000000000000000000, erc20_contract_address
+        );
+    stop_cheat_caller_address(jolt_contract_address);
+
+    // get and check subscription data
+    let subscription_data = dispatcher.get_subscription_data(sub_id);
+    assert(subscription_data.creator == ADDRESS1.try_into().unwrap(), 'invalid creator');
+    assert(subscription_data.fee_address == ADDRESS1.try_into().unwrap(), 'invalid fee address');
+    assert(subscription_data.amount == 1000000000000000000, 'invalid amount');
+    assert(
+        subscription_data.erc20_contract_address == erc20_contract_address, 'invalid erc20 contract'
+    );
+}
+
+#[test]
 fn test_jolt_subscription() {
     let (jolt_contract_address, erc20_contract_address) = __setup__();
     let dispatcher = IJoltDispatcher { contract_address: jolt_contract_address };
@@ -1088,6 +1119,54 @@ fn test_auto_renewal() {
     // check that fee_address received sub amount plus renewal amounts
     let balance = erc20_dispatcher.balance_of(ADMIN.try_into().unwrap());
     assert(balance == 4000000000000000000, 'incorrect balance');
+
+    stop_cheat_block_timestamp(jolt_contract_address);
+    stop_cheat_caller_address(jolt_contract_address);
+}
+
+#[test]
+fn test_cancel_auto_renewal() {
+    let (jolt_contract_address, erc20_contract_address) = __setup__();
+    let dispatcher = IJoltDispatcher { contract_address: jolt_contract_address };
+    let erc20_dispatcher = IERC20Dispatcher { contract_address: erc20_contract_address };
+
+    // create subscription
+    start_cheat_caller_address(jolt_contract_address, ADDRESS1.try_into().unwrap());
+    let sub_id = dispatcher
+        .create_subscription(
+            ADMIN.try_into().unwrap(), 1000000000000000000, erc20_contract_address
+        );
+
+    // user first need to subscribe
+    let jolt_params = JoltParams {
+        jolt_type: JoltType::Subscription,
+        recipient: contract_address_const::<0>(),
+        memo: "hey first subscription ever!",
+        amount: 2000000000000000000,
+        expiration_stamp: 0,
+        subscription_details: (sub_id, true, 5),
+        erc20_contract_address: erc20_contract_address
+    };
+
+    // approve contract to spend amount
+    start_cheat_caller_address(erc20_contract_address, ADDRESS1.try_into().unwrap());
+    erc20_dispatcher.approve(jolt_contract_address, 50000000000000000000);
+    stop_cheat_caller_address(erc20_contract_address);
+
+    // jolt
+    start_cheat_caller_address(jolt_contract_address, ADDRESS1.try_into().unwrap());
+    start_cheat_block_timestamp(jolt_contract_address, 36000);
+    start_cheat_nonce(jolt_contract_address, 23);
+
+    dispatcher.jolt(jolt_params);
+
+    // try to cancel auto renewal
+    dispatcher.cancel_auto_renewal(sub_id);
+
+    // check that renewal data was updated
+    let renewal_iterations = dispatcher
+        .get_renewal_iterations(ADDRESS1.try_into().unwrap(), sub_id);
+    assert(renewal_iterations == 0, 'invalid iteration count');
 
     stop_cheat_block_timestamp(jolt_contract_address);
     stop_cheat_caller_address(jolt_contract_address);

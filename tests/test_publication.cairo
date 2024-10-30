@@ -1602,10 +1602,7 @@ fn test_collect() {
     start_cheat_caller_address(publication_contract_address, USER_TWO.try_into().unwrap());
     // // Case 1: First collection, expecting new deployment
     let token_id = publication_dispatcher
-        .collect(
-            profile_address: user_one_profile_address,
-            pub_id: pub_assigned_id
-        );
+        .collect(profile_address: user_one_profile_address, pub_id: pub_assigned_id);
     let collect_nft1 = publication_dispatcher
         .get_publication(user_one_profile_address, pub_assigned_id)
         .collect_nft;
@@ -1618,10 +1615,7 @@ fn test_collect() {
     start_cheat_caller_address(publication_contract_address, USER_THREE.try_into().unwrap());
     // // Case 2: collect the same publication, expecting reuse of the existing contract
     let token_id2 = publication_dispatcher
-        .collect(
-            profile_address: user_one_profile_address,
-            pub_id: pub_assigned_id
-        );
+        .collect(profile_address: user_one_profile_address, pub_id: pub_assigned_id);
     let collect_nft2 = publication_dispatcher
         .get_publication(user_one_profile_address, pub_assigned_id)
         .collect_nft;

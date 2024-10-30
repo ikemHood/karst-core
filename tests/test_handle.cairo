@@ -57,8 +57,7 @@ fn test_mint_handle_two() {
     let handles_dispatcher = IHandleDispatcher { contract_address: handles_contract_address };
 
     start_cheat_caller_address(handles_contract_address, USER_ONE.try_into().unwrap());
-    let token_id = handles_dispatcher
-        .mint_handle(TEST_LOCAL_NAME_TWO);
+    let token_id = handles_dispatcher.mint_handle(TEST_LOCAL_NAME_TWO);
 
     let local_name: felt252 = handles_dispatcher.get_local_name(token_id);
     assert(local_name == TEST_LOCAL_NAME_TWO, 'invalid local name two');
@@ -210,8 +209,7 @@ fn test_mint_handle_event() {
     start_cheat_caller_address(handles_contract_address, USER_ONE.try_into().unwrap());
     let mut spy = spy_events();
 
-    let test_token_id = handles_dispatcher
-        .mint_handle(TEST_LOCAL_NAME);
+    let test_token_id = handles_dispatcher.mint_handle(TEST_LOCAL_NAME);
     let expected_event = Handles::Event::HandleMinted(
         Handles::HandleMinted {
             local_name: TEST_LOCAL_NAME,
@@ -235,8 +233,7 @@ fn test_burn_handle_event() {
     start_cheat_caller_address(handles_contract_address, USER_ONE.try_into().unwrap());
     let mut spy = spy_events();
 
-    let test_token_id = handles_dispatcher
-        .mint_handle(TEST_LOCAL_NAME);
+    let test_token_id = handles_dispatcher.mint_handle(TEST_LOCAL_NAME);
 
     let mut expected_event = Handles::Event::HandleMinted(
         Handles::HandleMinted {
