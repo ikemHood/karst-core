@@ -110,12 +110,17 @@ fn __setup__() -> (ContractAddress, ContractAddress, ContractAddress, ContractAd
     stop_cheat_caller_address(hub_contract_address);
 
     // mint and link handle for user_one
+    start_cheat_caller_address(handle_contract_address, user_one_profile_address);
     let handleDispatcher = IHandleDispatcher { contract_address: handle_contract_address };
     let handleRegistryDispatcher = IHandleRegistryDispatcher {
         contract_address: handle_registry_contract_address
     };
-    let minted_handle_id = handleDispatcher.mint_handle(user_one_profile_address, TEST_LOCAL_NAME);
+    let minted_handle_id = handleDispatcher.mint_handle(TEST_LOCAL_NAME);
+    stop_cheat_caller_address(handle_contract_address);
+
+    start_cheat_caller_address(handle_registry_contract_address, user_one_profile_address);
     handleRegistryDispatcher.link(minted_handle_id, user_one_profile_address);
+    stop_cheat_caller_address(handle_registry_contract_address);
 
     return (
         hub_contract_address,
@@ -142,10 +147,11 @@ fn test_hub_following() {
 
     let dispatcher = IHubDispatcher { contract_address: hub_contract_address };
 
+    start_cheat_caller_address(hub_contract_address, user_one_profile_address);
     let profiles_to_follow: Array<ContractAddress> = array![
         user_two_profile_address, user_three_profile_address
     ];
-    dispatcher.follow(user_one_profile_address, profiles_to_follow);
+    dispatcher.follow(profiles_to_follow);
 
     let follow_status_1 = dispatcher
         .is_following(user_two_profile_address, user_one_profile_address);
@@ -154,6 +160,7 @@ fn test_hub_following() {
 
     assert(follow_status_1 == true, 'invalid follow status');
     assert(follow_status_2 == true, 'invalid follow status');
+    stop_cheat_caller_address(hub_contract_address);
 }
 
 #[test]
@@ -164,10 +171,12 @@ fn test_hub_following_fails_if_any_profile_is_invalid() {
 
     let dispatcher = IHubDispatcher { contract_address: hub_contract_address };
 
+    start_cheat_caller_address(hub_contract_address, user_one_profile_address);
     let profiles_to_follow: Array<ContractAddress> = array![
         ADDRESS4.try_into().unwrap(), user_three_profile_address
     ];
-    dispatcher.follow(user_one_profile_address, profiles_to_follow);
+    dispatcher.follow(profiles_to_follow);
+    stop_cheat_caller_address(hub_contract_address);
 }
 
 #[test]
@@ -177,8 +186,10 @@ fn test_hub_following_fails_if_profile_is_self_following() {
 
     let dispatcher = IHubDispatcher { contract_address: hub_contract_address };
 
+    start_cheat_caller_address(hub_contract_address, user_one_profile_address);
     let profiles_to_follow: Array<ContractAddress> = array![user_one_profile_address];
-    dispatcher.follow(user_one_profile_address, profiles_to_follow);
+    dispatcher.follow(profiles_to_follow);
+    stop_cheat_caller_address(hub_contract_address);
 }
 
 #[test]
@@ -195,13 +206,13 @@ fn test_hub_unfollowing() {
     let dispatcher = IHubDispatcher { contract_address: hub_contract_address };
 
     // first follow the profiles
+    start_cheat_caller_address(hub_contract_address, user_one_profile_address);
     let profiles_to_follow: Array<ContractAddress> = array![
         user_two_profile_address, user_three_profile_address
     ];
-    dispatcher.follow(user_one_profile_address, profiles_to_follow);
+    dispatcher.follow(profiles_to_follow);
 
     // then unfollow them
-    start_cheat_caller_address(hub_contract_address, user_one_profile_address);
     let profiles_to_unfollow: Array<ContractAddress> = array![
         user_two_profile_address, user_three_profile_address
     ];
@@ -232,34 +243,33 @@ fn test_set_block_status() {
     let dispatcher = IHubDispatcher { contract_address: hub_contract_address };
 
     // follow action
-    dispatcher.follow(user_two_profile_address, array![user_one_profile_address]);
-    dispatcher.follow(user_three_profile_address, array![user_one_profile_address]);
+    start_cheat_caller_address(hub_contract_address, user_one_profile_address);
+    dispatcher.follow(array![user_two_profile_address, user_three_profile_address]);
+    stop_cheat_caller_address(hub_contract_address);
 
     // block action
+    start_cheat_caller_address(hub_contract_address, user_two_profile_address);
     let profiles_to_block: Array<ContractAddress> = array![
-        user_two_profile_address, user_three_profile_address
+        user_one_profile_address
     ];
-    dispatcher.set_block_status(user_one_profile_address, profiles_to_block, true);
+    dispatcher.set_block_status(profiles_to_block, true);
 
     // check block status
-    let block_status_1 = dispatcher.is_blocked(user_one_profile_address, user_two_profile_address);
-    let block_status_2 = dispatcher
-        .is_blocked(user_one_profile_address, user_three_profile_address);
+    let block_status_1 = dispatcher.is_blocked(user_two_profile_address, user_one_profile_address);
     assert(block_status_1 == true, 'invalid block status');
-    assert(block_status_2 == true, 'invalid block status');
+    stop_cheat_caller_address(hub_contract_address);
 
     // unblock action
+    start_cheat_caller_address(hub_contract_address, user_two_profile_address);
     let profiles_to_unblock: Array<ContractAddress> = array![
-        user_two_profile_address, user_three_profile_address
+        user_one_profile_address
     ];
-    dispatcher.set_block_status(user_one_profile_address, profiles_to_unblock, false);
+    dispatcher.set_block_status(profiles_to_unblock, false);
 
     // check block status
-    let block_status_3 = dispatcher.is_blocked(user_one_profile_address, user_two_profile_address);
-    let block_status_4 = dispatcher
-        .is_blocked(user_one_profile_address, user_three_profile_address);
-    assert(block_status_3 == false, 'invalid block status');
-    assert(block_status_4 == false, 'invalid block status');
+    let block_status_2 = dispatcher.is_blocked(user_two_profile_address, user_one_profile_address);
+    assert(block_status_2 == false, 'invalid block status');
+    stop_cheat_caller_address(hub_contract_address);
 }
 
 #[test]

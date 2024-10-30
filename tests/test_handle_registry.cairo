@@ -4,7 +4,7 @@ use core::result::ResultTrait;
 use core::traits::{TryInto, Into};
 use starknet::{ContractAddress, get_block_timestamp};
 use snforge_std::{
-    declare, start_cheat_caller_address, stop_cheat_caller_address, spy_events,
+    declare, start_cheat_caller_address, stop_cheat_caller_address, start_cheat_block_timestamp, stop_cheat_block_timestamp, spy_events,
     EventSpyAssertionsTrait, ContractClassTrait, DeclareResultTrait
 };
 
@@ -68,8 +68,8 @@ fn test_resolve() {
     let handle_dispatcher = IHandleDispatcher { contract_address: handle_contract_address };
 
     // Mint Handle to USER_ONE
-    start_cheat_caller_address(handle_contract_address, ADMIN_ADDRESS.try_into().unwrap());
-    let token_id = handle_dispatcher.mint_handle(USER_ONE.try_into().unwrap(), TEST_LOCAL_NAME);
+    start_cheat_caller_address(handle_contract_address, USER_ONE.try_into().unwrap());
+    let token_id = handle_dispatcher.mint_handle(TEST_LOCAL_NAME);
 
     // Link handle to USER_ONE
     handle_registry_dispatcher.link(token_id, USER_ONE.try_into().unwrap());
@@ -78,6 +78,7 @@ fn test_resolve() {
         handle_registry_dispatcher.resolve(token_id) == USER_ONE.try_into().unwrap(),
         'INCORRECT PROFILE ID'
     );
+    stop_cheat_caller_address(handle_contract_address);
 }
 
 #[test]
@@ -89,14 +90,17 @@ fn test_link() {
     let handleDispatcher = IHandleDispatcher { contract_address: handle_contract_address };
 
     // mint handle
-    let handle_id = handleDispatcher.mint_handle(USER_ONE.try_into().unwrap(), TEST_LOCAL_NAME);
+    start_cheat_caller_address(handle_contract_address, USER_ONE.try_into().unwrap());
+    let handle_id = handleDispatcher.mint_handle(TEST_LOCAL_NAME);
 
     // link token to profile
+    start_cheat_caller_address(handle_registry_address, USER_ONE.try_into().unwrap());
     registryDispatcher.link(handle_id, USER_ONE.try_into().unwrap());
 
     // check profile was linked
     let retrieved_handle = registryDispatcher.get_handle(USER_ONE.try_into().unwrap());
     assert(retrieved_handle == handle_id, 'linking failed');
+    stop_cheat_caller_address(handle_registry_address);
 }
 
 #[test]
@@ -109,10 +113,14 @@ fn test_linking_fails_if_profile_address_is_not_owner() {
     let handleDispatcher = IHandleDispatcher { contract_address: handle_contract_address };
 
     // mint handle
-    let handle_id = handleDispatcher.mint_handle(USER_ONE.try_into().unwrap(), TEST_LOCAL_NAME);
+    start_cheat_caller_address(handle_contract_address, USER_TWO.try_into().unwrap());
+    let handle_id = handleDispatcher.mint_handle(TEST_LOCAL_NAME);
+    stop_cheat_caller_address(handle_contract_address);
 
     // link token to profile
-    registryDispatcher.link(handle_id, USER_TWO.try_into().unwrap());
+    start_cheat_caller_address(handle_registry_address, USER_ONE.try_into().unwrap());
+    registryDispatcher.link(handle_id, USER_ONE.try_into().unwrap());
+    stop_cheat_caller_address(handle_registry_address);
 }
 
 #[test]
@@ -125,13 +133,16 @@ fn test_does_not_link_twice_for_same_handle() {
     let handleDispatcher = IHandleDispatcher { contract_address: handle_contract_address };
 
     // mint handle
-    let handle_id = handleDispatcher.mint_handle(USER_ONE.try_into().unwrap(), TEST_LOCAL_NAME);
+    start_cheat_caller_address(handle_contract_address, USER_ONE.try_into().unwrap());
+    let handle_id = handleDispatcher.mint_handle(TEST_LOCAL_NAME);
 
     // link token to profile
+    start_cheat_caller_address(handle_registry_address, USER_ONE.try_into().unwrap());
     registryDispatcher.link(handle_id, USER_ONE.try_into().unwrap());
 
     // try linking again
     registryDispatcher.link(handle_id, USER_ONE.try_into().unwrap());
+    stop_cheat_caller_address(handle_registry_address);
 }
 
 #[test]
@@ -143,13 +154,15 @@ fn test_unlink() {
     let handleDispatcher = IHandleDispatcher { contract_address: handle_contract_address };
 
     // mint handle
-    let handle_id = handleDispatcher.mint_handle(USER_ONE.try_into().unwrap(), TEST_LOCAL_NAME);
+    start_cheat_caller_address(handle_contract_address, USER_ONE.try_into().unwrap());
+    let handle_id = handleDispatcher.mint_handle(TEST_LOCAL_NAME);
+    stop_cheat_caller_address(handle_contract_address);
 
     // link token to profile
+    start_cheat_caller_address(handle_registry_address, USER_ONE.try_into().unwrap());
     registryDispatcher.link(handle_id, USER_ONE.try_into().unwrap());
 
     // call unlink
-    start_cheat_caller_address(handle_registry_address, USER_ONE.try_into().unwrap());
     registryDispatcher.unlink(handle_id, USER_ONE.try_into().unwrap());
 
     // check it unlinks successfully
@@ -168,13 +181,15 @@ fn test_unlink_fails_if_caller_is_not_owner() {
     let handleDispatcher = IHandleDispatcher { contract_address: handle_contract_address };
 
     // mint handle
-    let handle_id = handleDispatcher.mint_handle(USER_ONE.try_into().unwrap(), TEST_LOCAL_NAME);
+    start_cheat_caller_address(handle_contract_address, USER_ONE.try_into().unwrap());
+    let handle_id = handleDispatcher.mint_handle(TEST_LOCAL_NAME);
+    stop_cheat_caller_address(handle_contract_address);
 
     // link token to profile
+    start_cheat_caller_address(handle_registry_address, USER_TWO.try_into().unwrap());
     registryDispatcher.link(handle_id, USER_ONE.try_into().unwrap());
 
     // call unlink
-    start_cheat_caller_address(handle_registry_address, USER_TWO.try_into().unwrap());
     registryDispatcher.unlink(handle_id, USER_ONE.try_into().unwrap());
     stop_cheat_caller_address(handle_registry_address);
 }
@@ -189,11 +204,13 @@ fn test_linked_event_emission() {
     let mut spy = spy_events();
 
     // mint handle
-    let handle_id = handleDispatcher.mint_handle(USER_ONE.try_into().unwrap(), TEST_LOCAL_NAME);
-
-    start_cheat_caller_address(handle_registry_address, USER_ONE.try_into().unwrap());
+    start_cheat_caller_address(handle_contract_address, USER_ONE.try_into().unwrap());
+    let handle_id = handleDispatcher.mint_handle(TEST_LOCAL_NAME);
+    stop_cheat_caller_address(handle_contract_address);
 
     // link token to profile
+    start_cheat_caller_address(handle_registry_address, USER_ONE.try_into().unwrap());
+    start_cheat_block_timestamp(handle_registry_address, 40);
     registryDispatcher.link(handle_id, USER_ONE.try_into().unwrap());
 
     let expected_event = LinkedEvent::Linked(
@@ -201,10 +218,11 @@ fn test_linked_event_emission() {
             handle_id: handle_id,
             profile_address: USER_ONE.try_into().unwrap(),
             caller: USER_ONE.try_into().unwrap(),
-            timestamp: get_block_timestamp()
+            timestamp: 40
         }
     );
     spy.assert_emitted(@array![(handle_registry_address, expected_event)]);
+    stop_cheat_block_timestamp(handle_registry_address);
     stop_cheat_caller_address(handle_registry_address);
 }
 
@@ -218,12 +236,13 @@ fn test_unlinked_event_emission() {
     let mut spy = spy_events();
 
     // mint handle
-    let handle_id = handleDispatcher.mint_handle(USER_ONE.try_into().unwrap(), TEST_LOCAL_NAME);
+    start_cheat_caller_address(handle_contract_address, USER_ONE.try_into().unwrap());
+    let handle_id = handleDispatcher.mint_handle(TEST_LOCAL_NAME);
+    stop_cheat_caller_address(handle_contract_address);
 
     // link token to profile
-    registryDispatcher.link(handle_id, USER_ONE.try_into().unwrap());
-
     start_cheat_caller_address(handle_registry_address, USER_ONE.try_into().unwrap());
+    registryDispatcher.link(handle_id, USER_ONE.try_into().unwrap());
 
     // call unlink
     registryDispatcher.unlink(handle_id, USER_ONE.try_into().unwrap());

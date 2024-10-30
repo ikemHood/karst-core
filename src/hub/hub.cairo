@@ -4,13 +4,11 @@ use starknet::ContractAddress;
 trait IColonizHub<TState> {
     fn follow(
         ref self: TState,
-        follower_profile_address: ContractAddress,
         address_of_profiles_to_follow: Array<ContractAddress>
     ) -> Array<u256>;
     fn unfollow(ref self: TState, address_of_profiles_to_unfollow: Array<ContractAddress>);
     fn set_block_status(
         ref self: TState,
-        blocker_profile_address: ContractAddress,
         address_of_profiles_to_block: Array<ContractAddress>,
         block_status: bool
     );
@@ -147,15 +145,13 @@ pub mod ColonizHub {
         // *************************************************************************
         //                            EXTERNAL FUNCTIONS
         // *************************************************************************
-        // TODO: Fix get_caller_address so not just anybody can follow on someone's behalf
         /// @notice follows a set of given addresses
-        /// @param follower_profile_address address of the user trying to perform the follow action
         /// @param address_of_profiles_to_follow addresses of profiles to follow
         fn follow(
             ref self: ContractState,
-            follower_profile_address: ContractAddress,
             address_of_profiles_to_follow: Array<ContractAddress>
         ) -> Array<u256> {
+            let follower_profile_address = get_caller_address();
             let mut addresses_to_follow = address_of_profiles_to_follow.span();
             let mut follow_ids = array![];
 
@@ -182,17 +178,15 @@ pub mod ColonizHub {
             };
         }
 
-        // TODO: Fix get_caller_address so not just anybody can follow on someone's behalf
         /// @notice blocks/unblocks a set of given addresses
-        /// @param blocker_profile_address address of the user trying to perform the block/unblock
         /// action @param address_of_profiles_to_block addresses of profiles to block/unblock
         /// @param block_status true if intent is to block, false if intent is to unblock
         fn set_block_status(
             ref self: ContractState,
-            blocker_profile_address: ContractAddress,
             address_of_profiles_to_block: Array<ContractAddress>,
             block_status: bool
         ) {
+            let blocker_profile_address = get_caller_address();
             let mut addresses = address_of_profiles_to_block.span();
 
             while addresses.len() != 0 {

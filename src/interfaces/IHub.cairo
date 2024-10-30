@@ -55,23 +55,17 @@ pub trait IHub<TState> {
     // *************************************************************************
     fn follow(
         ref self: TState,
-        follower_profile_address: ContractAddress,
         address_of_profiles_to_follow: Array<ContractAddress>
     ) -> Array<u256>;
-
     fn unfollow(ref self: TState, address_of_profiles_to_unfollow: Array<ContractAddress>);
-
     fn set_block_status(
         ref self: TState,
-        blocker_profile_address: ContractAddress,
         address_of_profiles_to_block: Array<ContractAddress>,
         block_status: bool
     );
-
     fn is_following(
         self: @TState, followed_profile_address: ContractAddress, follower_address: ContractAddress
     ) -> bool;
-
     fn is_blocked(
         self: @TState, followed_profile_address: ContractAddress, follower_address: ContractAddress
     ) -> bool;
@@ -80,6 +74,5 @@ pub trait IHub<TState> {
     //                            HANDLES
     // *************************************************************************
     fn get_handle_id(self: @TState, profile_address: ContractAddress) -> u256;
-
     fn get_handle(self: @TState, handle_id: u256) -> ByteArray;
 }

@@ -44,7 +44,7 @@ fn test_mint_handle() {
     let handles_dispatcher = IHandleDispatcher { contract_address: handles_contract_address };
 
     start_cheat_caller_address(handles_contract_address, USER_ONE.try_into().unwrap());
-    let token_id = handles_dispatcher.mint_handle(USER_ONE.try_into().unwrap(), TEST_LOCAL_NAME);
+    let token_id = handles_dispatcher.mint_handle(TEST_LOCAL_NAME);
 
     let local_name: felt252 = handles_dispatcher.get_local_name(token_id);
     assert(local_name == TEST_LOCAL_NAME, 'invalid local name');
@@ -58,7 +58,7 @@ fn test_mint_handle_two() {
 
     start_cheat_caller_address(handles_contract_address, USER_ONE.try_into().unwrap());
     let token_id = handles_dispatcher
-        .mint_handle(USER_ONE.try_into().unwrap(), TEST_LOCAL_NAME_TWO);
+        .mint_handle(TEST_LOCAL_NAME_TWO);
 
     let local_name: felt252 = handles_dispatcher.get_local_name(token_id);
     assert(local_name == TEST_LOCAL_NAME_TWO, 'invalid local name two');
@@ -73,7 +73,7 @@ fn test_mint_handle_with_bad_local_name_1() {
     let handles_dispatcher = IHandleDispatcher { contract_address: handles_contract_address };
 
     start_cheat_caller_address(handles_contract_address, USER_ONE.try_into().unwrap());
-    handles_dispatcher.mint_handle(USER_ONE.try_into().unwrap(), TEST_BAD_LOCAL_NAME_1);
+    handles_dispatcher.mint_handle(TEST_BAD_LOCAL_NAME_1);
 }
 #[test]
 #[should_panic(expected: ('coloniz: invalid local name!',))]
@@ -82,7 +82,7 @@ fn test_mint_handle_with_bad_local_name_2() {
     let handles_dispatcher = IHandleDispatcher { contract_address: handles_contract_address };
 
     start_cheat_caller_address(handles_contract_address, USER_ONE.try_into().unwrap());
-    handles_dispatcher.mint_handle(USER_ONE.try_into().unwrap(), TEST_BAD_LOCAL_NAME_2);
+    handles_dispatcher.mint_handle(TEST_BAD_LOCAL_NAME_2);
 }
 
 #[test]
@@ -92,7 +92,7 @@ fn test_mint_handle_with_bad_local_name_3() {
     let handles_dispatcher = IHandleDispatcher { contract_address: handles_contract_address };
 
     start_cheat_caller_address(handles_contract_address, USER_ONE.try_into().unwrap());
-    handles_dispatcher.mint_handle(USER_ONE.try_into().unwrap(), TEST_BAD_LOCAL_NAME_3);
+    handles_dispatcher.mint_handle(TEST_BAD_LOCAL_NAME_3);
 }
 
 #[test]
@@ -114,7 +114,7 @@ fn test_handle_id_exists_after_mint() {
     let _erc721Dispatcher = IERC721Dispatcher { contract_address };
 
     start_cheat_caller_address(contract_address, ADMIN_ADDRESS.try_into().unwrap());
-    let handle_id: u256 = dispatcher.mint_handle(USER_ONE.try_into().unwrap(), 'handle');
+    let handle_id: u256 = dispatcher.mint_handle('handle');
 
     assert(dispatcher.exists(handle_id), 'Handle ID does not exist');
 }
@@ -126,12 +126,11 @@ fn test_total_supply() {
 
     let current_total_supply: u256 = dispatcher.total_supply();
 
-    start_cheat_caller_address(contract_address, ADMIN_ADDRESS.try_into().unwrap());
-    let handle_id: u256 = dispatcher.mint_handle(USER_ONE.try_into().unwrap(), 'handle');
+    start_cheat_caller_address(contract_address, USER_ONE.try_into().unwrap());
+    let handle_id: u256 = dispatcher.mint_handle('handle');
     let total_supply_after_mint: u256 = dispatcher.total_supply();
     assert(total_supply_after_mint == current_total_supply + 1, 'WRONG_TOTAL_SUPPLY');
 
-    start_cheat_caller_address(contract_address, USER_ONE.try_into().unwrap());
     dispatcher.burn_handle(handle_id);
 
     let total_supply_after_burn: u256 = dispatcher.total_supply();
@@ -144,8 +143,8 @@ fn test_burn() {
     let dispatcher = IHandleDispatcher { contract_address };
     let _erc721Dispatcher = IERC721Dispatcher { contract_address };
 
-    start_cheat_caller_address(contract_address, ADMIN_ADDRESS.try_into().unwrap());
-    let handle_id: u256 = dispatcher.mint_handle(USER_ONE.try_into().unwrap(), 'handle');
+    start_cheat_caller_address(contract_address, USER_ONE.try_into().unwrap());
+    let handle_id: u256 = dispatcher.mint_handle('handle');
 
     assert(dispatcher.exists(handle_id) == true, 'Handle ID does not exist');
     assert(_erc721Dispatcher.owner_of(handle_id) == USER_ONE.try_into().unwrap(), 'Wrong Owner');
@@ -163,13 +162,14 @@ fn test_cannot_burn_if_not_owner_of() {
     let dispatcher = IHandleDispatcher { contract_address };
     let _erc721Dispatcher = IERC721Dispatcher { contract_address };
 
-    start_cheat_caller_address(contract_address, ADMIN_ADDRESS.try_into().unwrap());
-    let handle_id: u256 = dispatcher.mint_handle(USER_ONE.try_into().unwrap(), 'handle');
-
-    assert(dispatcher.exists(handle_id), 'Handle ID does not exist');
-
     start_cheat_caller_address(contract_address, USER_TWO.try_into().unwrap());
+    let handle_id: u256 = dispatcher.mint_handle('handle');
+    stop_cheat_caller_address(contract_address);
+
+    start_cheat_caller_address(contract_address, USER_ONE.try_into().unwrap());
+    assert(dispatcher.exists(handle_id), 'Handle ID does not exist');
     dispatcher.burn_handle(handle_id);
+    stop_cheat_caller_address(contract_address);
 }
 
 #[test]
@@ -179,8 +179,7 @@ fn test_get_handle() {
     let handles_dispatcher = IHandleDispatcher { contract_address: handles_contract_address };
 
     start_cheat_caller_address(handles_contract_address, USER_ONE.try_into().unwrap());
-
-    let token_id = handles_dispatcher.mint_handle(USER_ONE.try_into().unwrap(), TEST_LOCAL_NAME);
+    let token_id = handles_dispatcher.mint_handle(TEST_LOCAL_NAME);
 
     let handle: ByteArray = handles_dispatcher.get_handle(token_id);
 
@@ -212,7 +211,7 @@ fn test_mint_handle_event() {
     let mut spy = spy_events();
 
     let test_token_id = handles_dispatcher
-        .mint_handle(USER_ONE.try_into().unwrap(), TEST_LOCAL_NAME);
+        .mint_handle(TEST_LOCAL_NAME);
     let expected_event = Handles::Event::HandleMinted(
         Handles::HandleMinted {
             local_name: TEST_LOCAL_NAME,
@@ -237,7 +236,7 @@ fn test_burn_handle_event() {
     let mut spy = spy_events();
 
     let test_token_id = handles_dispatcher
-        .mint_handle(USER_ONE.try_into().unwrap(), TEST_LOCAL_NAME);
+        .mint_handle(TEST_LOCAL_NAME);
 
     let mut expected_event = Handles::Event::HandleMinted(
         Handles::HandleMinted {

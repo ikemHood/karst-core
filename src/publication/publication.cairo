@@ -716,6 +716,11 @@ pub mod PublicationComponent {
             status
         }
 
+        /// @notice deploys the collect nft for a publication
+        /// @param profile_address owner of the publication
+        /// @param pub_id id of the publication
+        /// @param collect_nft_impl_class_hash class hash of the collect nft
+        /// @param salt for randomization
         fn _deploy_collect_nft(
             ref self: ComponentState<TContractState>,
             coloniz_hub: ContractAddress,
@@ -743,6 +748,9 @@ pub mod PublicationComponent {
             account_address
         }
 
+        /// @notice gets the collect nft address
+        /// @param profile_address owner of the publication
+        /// @param pub_id id of the publication
         fn _get_or_deploy_collect_nft(
             ref self: ComponentState<TContractState>,
             profile_address: ContractAddress,
@@ -776,6 +784,10 @@ pub mod PublicationComponent {
             let collect_nft_address = self.get_publication(profile_address, pub_id).collect_nft;
             collect_nft_address
         }
+
+        /// @notice mints the collect nft for a publication
+        /// @param collect_nft nft of the collected token
+        /// @param caller profile to be minted to
         fn _mint_collect_nft(
             ref self: ComponentState<TContractState>, collect_nft: ContractAddress, caller: ContractAddress
         ) -> u256 {
@@ -783,6 +795,9 @@ pub mod PublicationComponent {
             token_id
         }
 
+        /// @notice internal function to check a community censorship status and validate user
+        /// @param profile_owner profile posting to the community
+        /// @param community_id id of community to be posted to
         fn _check_community_approval(
             self: @ComponentState<TContractState>,
             profile_owner: ContractAddress,
@@ -799,6 +814,9 @@ pub mod PublicationComponent {
             !community_censorship_status
         }
 
+        /// @notice internal function to check a channel censorship status and validate user
+        /// @param profile_owner profile posting to the channel
+        /// @param channel_id id of channel to be posted to
         fn _check_channel_approval(
             self: @ComponentState<TContractState>, profile_owner: ContractAddress, channel_id: u256
         ) -> bool {
@@ -811,6 +829,9 @@ pub mod PublicationComponent {
             !channel_censorship_status
         }
 
+        /// @notice internal function to validate a user's channel membership
+        /// @param profile_address address to be validated
+        /// @param channel_id id of channel to be posted to
         fn _validate_channel_membership_and_ban_status(
             self: @ComponentState<TContractState>,
             profile_address: ContractAddress,
@@ -827,6 +848,9 @@ pub mod PublicationComponent {
             assert(is_channel_member == true, NOT_CHANNEL_MEMBER);
         }
 
+        /// @notice internal function to validate a user's community membership
+        /// @param profile_address address to be validated
+        /// @param community_id id of community to be posted to
         fn _validate_community_membership_and_ban_status(
             self: @ComponentState<TContractState>,
             profile_address: ContractAddress,

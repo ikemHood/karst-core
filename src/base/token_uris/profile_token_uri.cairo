@@ -1,6 +1,3 @@
-// TODO:
-// https://github.com/lens-protocol/core/blob/master/contracts/misc/token-uris/ProfileTokenURI.sol
-
 pub mod ProfileTokenUri {
     use core::array::ArrayTrait;
     use coloniz::base::utils::byte_array_extra::FeltTryIntoByteArray;

@@ -1,6 +1,3 @@
-// TODO:
-// https://github.com/lens-protocol/core/blob/master/contracts/misc/token-uris/FollowTokenURI.sol#L14
-
 pub mod FollowTokenUri {
     use starknet::ContractAddress;
     use coloniz::base::utils::byte_array_extra::FeltTryIntoByteArray;

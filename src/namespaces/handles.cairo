@@ -109,7 +109,7 @@ pub mod Handles {
     #[constructor]
     fn constructor(ref self: ContractState, admin: ContractAddress) {
         self.admin.write(admin);
-        self.erc721.initializer("coloniz Handles", "coloniz", "");
+        self.erc721.initializer("Coloniz Handles", "CHandles", "");
     }
 
     // *************************************************************************
@@ -120,10 +120,10 @@ pub mod Handles {
         /// @notice mints a handle to a profile address
         /// @param address profile address to mint handle to
         /// @param local_name username to be minted
-        /// TODO: gate function? so only caller_address can mint
         fn mint_handle(
-            ref self: ContractState, address: ContractAddress, local_name: felt252,
+            ref self: ContractState, local_name: felt252,
         ) -> u256 {
+            let address = get_caller_address();
             self._validate_local_name(local_name);
             let token_id = self._mint_handle(address, local_name);
             token_id
@@ -201,12 +201,12 @@ pub mod Handles {
         // *************************************************************************
         /// @notice returns the collection name
         fn name(self: @ContractState) -> ByteArray {
-            return "coloniz Handles";
+            return "Coloniz Handles";
         }
 
         /// @notice returns the collection symbol
         fn symbol(self: @ContractState) -> ByteArray {
-            return "coloniz";
+            return "CHandles";
         }
 
         /// @notice returns the token URI of a particular handle
