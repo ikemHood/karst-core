@@ -34,7 +34,7 @@ async function deployKarstPublication() {
         fs.readFileSync(
           path.resolve(
             __dirname,
-            "../../../target/dev/karst_KarstPublication.compiled_contract_class.json"
+            "../../../target/dev/coloniz_ColonizPublication.compiled_contract_class.json"
           ),
         ).toString("ascii")
       );
@@ -43,11 +43,14 @@ async function deployKarstPublication() {
         fs.readFileSync(
           path.resolve(
             __dirname,
-            "../../../target/dev/karst_KarstPublication.contract_class.json"
+            "../../../target/dev/coloniz_ColonizPublication.contract_class.json"
           ),
         ).toString("ascii")
       );
-
+//declare coloniz_ChannelNFT
+//declare coloniz_CommunityNFT
+//deploy coloniz_ColonizNFT
+//deploy coloniz_ColonizHUB
       // Declare the contract
       const declareResponse = await account.declare({
         contract: compiledContractSierra,
